@@ -1,29 +1,27 @@
-# Render blueprint for Instant Appointments MCP.
+# Render blueprint for Instant Appointments MCP (free tier).
 # Deploy: push this repo to GitHub, then Render Dashboard → New → Blueprint
-# and point it at the repo. Render provisions everything below, including a
-# persistent disk so minted API keys and bookings survive restarts/redeploys.
-# After the first deploy, copy the minted reviewer key from the deploy logs
-# (look for 'Minted API key for "meta-reviewer"') into the Meta submission.
+# and point it at the repo.
+#
+# Free-tier facts this blueprint is designed around:
+# - No persistent disks: registries live at repo-relative data/*.json on the
+#   ephemeral filesystem, reseeded from committed files on every boot.
+# - Filesystem wiped on redeploy/restart/spin-down: the meta-reviewer key is
+#   restored from committed HASHES (data/api-keys.seed.json), so the raw key
+#   you hand Meta stays valid across wipes. Raw keys are never committed.
+# - Sleeps after 15 min idle (~1 min cold start): keep it awake with a free
+#   10-minute cron ping on /health (cron-job.org / UptimeRobot) — see README.
+# - No shell access: all key issuance happens via seeds/env, never via CLI
+#   on the server.
 services:
   - type: web
     name: instant-appointments
     runtime: node
-    plan: starter # stays awake (free tier sleeps) and allows a persistent disk
+    plan: free
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /health
-    disk:
-      name: lumen-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: NODE_VERSION
         value: "22"
-      - key: LUMEN_REGISTRY
-        value: /data/api-keys.json
-      - key: LUMEN_CUSTOMERS
-        value: /data/customers.json
-      - key: LUMEN_PROVIDERS
-        value: /data/providers.json
       - key: LUMEN_SEED_KEYS
-        value: meta-reviewer # minted on first boot if missing; raw key printed once in logs
+        value: meta-reviewer # fallback mint if the customer has no entry at all; raw key printed once in logs

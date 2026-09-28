@@ -1,0 +1,11 @@
+{
+  "entries": [
+    {
+      "customer_id": "meta-reviewer",
+      "key_hash": "c54fc581f162cd8cea49611c26457492b4d7d698edcfb539d81c8d523d2fc2e7",
+      "key_hint": "lumen_6532a0",
+      "revoked": false,
+      "created_at": "2026-09-28T03:10:00Z"
+    }
+  ]
+}

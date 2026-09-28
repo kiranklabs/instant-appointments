@@ -186,21 +186,26 @@ Error shape mirrors this: `{ok:false, error:{code, message}, fresh_availability?
 `ngrok http 3000`, hand Meta `<https-url>/mcp`. Why: zero deploy config,
 the reviewer hits a live streamable-HTTP endpoint in minutes, and nothing
 about the code changes when you promote it.
-**Production path: Render** (ready to deploy — see `render.yaml`):
+**Production path: Render, free tier** (ready to deploy — see `render.yaml`):
 
 1. Push this repo to GitHub.
-2. Render Dashboard → New → Blueprint → select the repo. Render provisions
-   the web service (Starter plan, so it stays awake) plus a 1 GB persistent
-   disk at `/data` for the key/customer/provider registries.
-3. On first boot the server seeds `/data` (providers + sample profiles) and
-   mints the `meta-reviewer` key (from `LUMEN_SEED_KEYS`), printing it **once**
-   in the deploy logs. Copy it into the Meta submission materials.
-4. Hand Meta `https://<service>.onrender.com/mcp` (`/health` for status).
+2. Render Dashboard → New → Blueprint → select the repo. Free instance, no
+   disk: registries live at repo-relative `data/*.json` and reseed from
+   committed files on every boot.
+3. The reviewer key is stable across wipes: its **hash** is committed in
+   `data/api-keys.seed.json` and restored on boot (raw keys are never
+   committed). No action needed — the same key works after every
+   redeploy/restart/spin-down.
+4. Keep it awake: free services sleep after 15 min idle (~1 min cold start).
+   Add a free 10-minute cron ping on `https://<service>.onrender.com/health`
+   (cron-job.org / UptimeRobot) so the idle timer never trips.
+5. Hand Meta `https://<service>.onrender.com/mcp` (`/health` for status).
 
-Notes: the Starter plan (~$7/mo + $0.25 disk) avoids free-tier sleep, which
-matters because a sleeping connector times out Meta's review calls. The free
-tier works for a smoke test but sleeps when idle and loses `/data` on
-redeploy (recoverable: `LUMEN_SEED_KEYS` re-mints on next boot).
+Free-tier notes: no shell access, so all key issuance happens via seeds/env
+(never CLI-on-server); bookings are in-memory and don't survive sleeps
+(unchanged from local dev — do review flows in one session). If review
+traffic ever needs zero cold starts, the upgrade path is Starter + disk
+(the old `render.yaml` shape); nothing in the code changes.
 
 > Meta's connector program is days old: before submitting, re-check the
 > current developer docs for anything contradicting this spec — chiefly

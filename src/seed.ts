@@ -1,11 +1,14 @@
-// Boot seeding for hosted environments (e.g. Render with a persistent disk).
+// Boot seeding for hosted environments (e.g. Render free tier with an
+// ephemeral filesystem, wiped on every redeploy/restart/spin-down).
 // Ensures the three file-backed registries exist before the server listens:
 // providers (Lumen + spa from the committed seed file), customer profiles
-// (seeded sample accounts), and the key registry (empty unless seeded via
-// LUMEN_SEED_KEYS). All files are only written when missing, except key
-// minting which tops up listed accounts that lack an active key.
-// Raw minted keys are printed to stdout ONCE — copy them from the deploy
-// logs into the submission materials, then they live only as hashes.
+// (seeded sample accounts), and the key registry. Hashed seed keys from the
+// committed data/api-keys.seed.json are restored whenever the live registry
+// lacks an active entry for that customer — so a fixed reviewer key survives
+// wipes (only hashes are committed; raw keys are never in the repo).
+// LUMEN_SEED_KEYS tops up any other listed accounts missing a key; raw
+// minted keys print to stdout ONCE — copy them from the deploy logs, then
+// they live only as hashes.
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -59,13 +62,46 @@ function ensureCustomers(customersPath: string): void {
 }
 
 function ensureKeys(keysPath: string): void {
-  if (existsSync(keysPath)) {
-    // Still validate shape; reset corrupt files to empty rather than crash.
-    loadRegistryFile(keysPath);
+  if (!existsSync(keysPath)) {
+    saveRegistryFile(keysPath, { entries: [] });
+    console.log(`Created empty key registry at ${keysPath}`);
+  }
+  // Restore committed hashed seed entries (e.g. the reviewer key) whenever
+  // the live registry has no active entry for that customer. Live entries
+  // are never overwritten — revocations and rotations always win.
+  let seedEntries: Array<{ customer_id: string; key_hash: string; key_hint: string }> = [];
+  try {
+    const raw = readFileSync(join(process.cwd(), "data/api-keys.seed.json"), "utf8");
+    const parsed = JSON.parse(raw) as { entries?: typeof seedEntries };
+    if (parsed && Array.isArray(parsed.entries)) seedEntries = parsed.entries;
+  } catch {
+    // No seed file (e.g. tests) — nothing to restore.
+  }
+  if (seedEntries.length === 0) {
+    loadRegistryFile(keysPath); // validate shape rather than crash
     return;
   }
-  saveRegistryFile(keysPath, { entries: [] });
-  console.log(`Created empty key registry at ${keysPath}`);
+  const data = loadRegistryFile(keysPath);
+  let restored = 0;
+  for (const s of seedEntries) {
+    if (!s || typeof s.customer_id !== "string" || typeof s.key_hash !== "string") continue;
+    // Skip when ANY entry exists for this customer — including revoked ones —
+    // so an intentional revocation is never resurrected by a restart.
+    // A full filesystem wipe removes all entries, which is when restore fires.
+    if (data.entries.some((e) => e.customer_id === s.customer_id)) continue;
+    data.entries.push({
+      customer_id: s.customer_id,
+      key_hash: s.key_hash,
+      key_hint: typeof s.key_hint === "string" ? s.key_hint : "",
+      revoked: false,
+      created_at: new Date().toISOString(),
+    });
+    restored++;
+  }
+  if (restored > 0) {
+    saveRegistryFile(keysPath, data);
+    console.log(`Restored ${restored} seeded API key(s) at ${keysPath}`);
+  }
 }
 
 /** Mint keys for LUMEN_SEED_KEYS accounts missing one; returns minted {id, key} pairs. */
@@ -75,7 +111,9 @@ export function mintSeedKeys(keysPath: string, ids: string[]): Array<{ customer_
   for (const id of ids) {
     const customer_id = id.trim();
     if (!customer_id) continue;
-    if (data.entries.some((e) => e.customer_id === customer_id && !e.revoked)) continue;
+    // Any existing entry (even revoked) blocks minting, so restarts never
+    // resurrect a revoked key. Full wipes remove all entries, then minting fires.
+    if (data.entries.some((e) => e.customer_id === customer_id)) continue;
     const rawKey = mintRawKey();
     data.entries.push({
       customer_id,
