@@ -1,0 +1,44 @@
+{
+  "id": "serenity-day-spa",
+  "name": "Serenity Day Spa",
+  "category": "spa",
+  "location": { "city": "Toronto", "area": "Midtown" },
+  "contact": { "phone": "+1 416-555-0202", "website": "https://example.com/serenity" },
+  "timezone": "America/Toronto",
+  "adapter": "sample",
+  "config": {
+    "services": [
+      {
+        "service_id": "swedish-massage",
+        "name": "Swedish Massage",
+        "price_cents": 9000,
+        "duration_min": 60,
+        "description": "Full-body Swedish massage with aromatherapy oils, with Noor."
+      },
+      {
+        "service_id": "facial",
+        "name": "Signature Facial",
+        "price_cents": 7500,
+        "duration_min": 45,
+        "description": "Deep-cleanse, exfoliation, mask and moisturize ritual, with Sam."
+      },
+      {
+        "service_id": "aromatherapy",
+        "name": "Aromatherapy Session",
+        "price_cents": 6000,
+        "duration_min": 30,
+        "description": "Guided aromatherapy rest session with essential oil blends, with Noor or Sam."
+      }
+    ],
+    "staff": [
+      { "name": "Noor", "services": ["swedish-massage", "aromatherapy"] },
+      { "name": "Sam", "services": ["facial", "aromatherapy"] }
+    ],
+    "hours": { "openHour": 10, "closeHour": 20, "slotStepMin": 15, "closedWeekdays": [1] },
+    "seeds": [
+      { "openOffset": 0, "stylist": "Noor", "service_id": "swedish-massage", "start": "11:00", "customer_id": "ava" },
+      { "openOffset": 1, "stylist": "Sam", "service_id": "facial", "start": "12:00", "customer_id": "leo" },
+      { "openOffset": 2, "stylist": "Noor", "service_id": "aromatherapy", "start": "15:00", "customer_id": "mia" }
+    ]
+  }
+}

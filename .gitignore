@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+/tmp/
+# API key registry holds live credential hashes. Never commit.
+# See data/api-keys.example.json for the shape; mint with `npm run keys`.
+# data/customers.json (profiles) and data/providers.json are intentional
+# sample seed data and stay tracked.
+data/api-keys.json

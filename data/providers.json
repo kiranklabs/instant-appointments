@@ -1,0 +1,207 @@
+{
+  "providers": [
+    {
+      "id": "lumen-hair-studio",
+      "name": "Lumen Hair Studio",
+      "category": "salon",
+      "location": {
+        "city": "Toronto",
+        "area": "Downtown"
+      },
+      "contact": {
+        "phone": "+1 416-555-0101",
+        "website": "https://example.com"
+      },
+      "timezone": "America/Toronto",
+      "adapter": "sample",
+      "config": {
+        "services": [
+          {
+            "service_id": "haircut",
+            "name": "Haircut",
+            "price_cents": 4500,
+            "duration_min": 45,
+            "description": "Consultation, precision cut, wash and style finish with Maya or Jordan."
+          },
+          {
+            "service_id": "color",
+            "name": "Full Color",
+            "price_cents": 12000,
+            "duration_min": 120,
+            "description": "Full all-over color with gloss seal and style finish with Maya or Priya."
+          },
+          {
+            "service_id": "blowout",
+            "name": "Blowout",
+            "price_cents": 3500,
+            "duration_min": 30,
+            "description": "Wash, blow-dry and styled finish with Jordan or Priya."
+          }
+        ],
+        "staff": [
+          {
+            "name": "Maya",
+            "services": [
+              "haircut",
+              "color"
+            ]
+          },
+          {
+            "name": "Jordan",
+            "services": [
+              "haircut",
+              "blowout"
+            ]
+          },
+          {
+            "name": "Priya",
+            "services": [
+              "color",
+              "blowout"
+            ]
+          }
+        ],
+        "hours": {
+          "openHour": 9,
+          "closeHour": 18,
+          "slotStepMin": 15,
+          "closedWeekdays": [
+            0,
+            1
+          ]
+        },
+        "seeds": [
+          {
+            "openOffset": 0,
+            "stylist": "Maya",
+            "service_id": "haircut",
+            "start": "10:00",
+            "customer_id": "ava"
+          },
+          {
+            "openOffset": 0,
+            "stylist": "Maya",
+            "service_id": "haircut",
+            "start": "11:00",
+            "customer_id": "ava"
+          },
+          {
+            "openOffset": 0,
+            "stylist": "Jordan",
+            "service_id": "blowout",
+            "start": "09:30",
+            "customer_id": "leo"
+          },
+          {
+            "openOffset": 1,
+            "stylist": "Priya",
+            "service_id": "color",
+            "start": "09:00",
+            "customer_id": "leo"
+          },
+          {
+            "openOffset": 1,
+            "stylist": "Maya",
+            "service_id": "color",
+            "start": "13:00",
+            "customer_id": "mia"
+          },
+          {
+            "openOffset": 2,
+            "stylist": "Jordan",
+            "service_id": "haircut",
+            "start": "14:00",
+            "customer_id": "mia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "serenity-day-spa",
+      "name": "Serenity Day Spa",
+      "category": "spa",
+      "location": {
+        "city": "Toronto",
+        "area": "Midtown"
+      },
+      "contact": {
+        "phone": "+1 416-555-0202",
+        "website": "https://example.com/serenity"
+      },
+      "timezone": "America/Toronto",
+      "adapter": "sample",
+      "config": {
+        "services": [
+          {
+            "service_id": "swedish-massage",
+            "name": "Swedish Massage",
+            "price_cents": 9000,
+            "duration_min": 60,
+            "description": "Full-body Swedish massage with aromatherapy oils, with Noor."
+          },
+          {
+            "service_id": "facial",
+            "name": "Signature Facial",
+            "price_cents": 7500,
+            "duration_min": 45,
+            "description": "Deep-cleanse, exfoliation, mask and moisturize ritual, with Sam."
+          },
+          {
+            "service_id": "aromatherapy",
+            "name": "Aromatherapy Session",
+            "price_cents": 6000,
+            "duration_min": 30,
+            "description": "Guided aromatherapy rest session with essential oil blends, with Noor or Sam."
+          }
+        ],
+        "staff": [
+          {
+            "name": "Noor",
+            "services": [
+              "swedish-massage",
+              "aromatherapy"
+            ]
+          },
+          {
+            "name": "Sam",
+            "services": [
+              "facial",
+              "aromatherapy"
+            ]
+          }
+        ],
+        "hours": {
+          "openHour": 10,
+          "closeHour": 20,
+          "slotStepMin": 15,
+          "closedWeekdays": [
+            1
+          ]
+        },
+        "seeds": [
+          {
+            "openOffset": 0,
+            "stylist": "Noor",
+            "service_id": "swedish-massage",
+            "start": "11:00",
+            "customer_id": "ava"
+          },
+          {
+            "openOffset": 1,
+            "stylist": "Sam",
+            "service_id": "facial",
+            "start": "12:00",
+            "customer_id": "leo"
+          },
+          {
+            "openOffset": 2,
+            "stylist": "Noor",
+            "service_id": "aromatherapy",
+            "start": "15:00",
+            "customer_id": "mia"
+          }
+        ]
+      }
+    }
+  ]
+}

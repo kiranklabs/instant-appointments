@@ -1,0 +1,32 @@
+{
+  "customers": [
+    {
+      "customer_id": "ava",
+      "name": "Ava Chen",
+      "phone": "+1 416-555-0101",
+      "email": "ava@example.com",
+      "created_at": "2026-09-27T04:14:35.985Z"
+    },
+    {
+      "customer_id": "leo",
+      "name": "Leo Martin",
+      "phone": "+1 416-555-0102",
+      "email": "leo@example.com",
+      "created_at": "2026-09-27T04:14:35.985Z"
+    },
+    {
+      "customer_id": "mia",
+      "name": "Mia Rossi",
+      "phone": "+1 416-555-0103",
+      "email": "mia@example.com",
+      "created_at": "2026-09-27T04:14:35.985Z"
+    },
+    {
+      "customer_id": "meta-reviewer",
+      "name": "Meta Reviewer",
+      "phone": "+1 416-555-0199",
+      "email": "reviewer@example.com",
+      "created_at": "2026-09-27T04:14:35.985Z"
+    }
+  ]
+}
