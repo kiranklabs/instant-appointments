@@ -186,12 +186,21 @@ Error shape mirrors this: `{ok:false, error:{code, message}, fresh_availability?
 `ngrok http 3000`, hand Meta `<https-url>/mcp`. Why: zero deploy config,
 the reviewer hits a live streamable-HTTP endpoint in minutes, and nothing
 about the code changes when you promote it.
-**Promotion path:** Railway or Render (persistent HTTPS, single service,
-`npm start` from `dist/`, env `PORT` + `LUMEN_REGISTRY`/`LUMEN_CUSTOMERS`/`LUMEN_PROVIDERS` pointing at a
-persistent volume, keys minted via `npm run keys -- seed-demo`). Both fit because the server is
-stateless HTTP with no local state worth preserving — though note the
-store is in-memory, so multi-instance production needs a shared DB
-(see limitations).
+**Production path: Render** (ready to deploy — see `render.yaml`):
+
+1. Push this repo to GitHub.
+2. Render Dashboard → New → Blueprint → select the repo. Render provisions
+   the web service (Starter plan, so it stays awake) plus a 1 GB persistent
+   disk at `/data` for the key/customer/provider registries.
+3. On first boot the server seeds `/data` (providers + sample profiles) and
+   mints the `meta-reviewer` key (from `LUMEN_SEED_KEYS`), printing it **once**
+   in the deploy logs. Copy it into the Meta submission materials.
+4. Hand Meta `https://<service>.onrender.com/mcp` (`/health` for status).
+
+Notes: the Starter plan (~$7/mo + $0.25 disk) avoids free-tier sleep, which
+matters because a sleeping connector times out Meta's review calls. The free
+tier works for a smoke test but sleeps when idle and loses `/data` on
+redeploy (recoverable: `LUMEN_SEED_KEYS` re-mints on next boot).
 
 > Meta's connector program is days old: before submitting, re-check the
 > current developer docs for anything contradicting this spec — chiefly
