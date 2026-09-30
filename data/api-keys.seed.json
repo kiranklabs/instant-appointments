@@ -2,10 +2,10 @@
   "entries": [
     {
       "customer_id": "meta-reviewer",
-      "key_hash": "c54fc581f162cd8cea49611c26457492b4d7d698edcfb539d81c8d523d2fc2e7",
-      "key_hint": "lumen_6532a0",
+      "key_hash": "52ceb8ffa3bbf1547495af97fdbac6adebba3c55fb4e35311b0ca6bcea1252d1",
+      "key_hint": "lumen_110484",
       "revoked": false,
-      "created_at": "2026-09-28T03:10:00Z"
+      "created_at": "2026-09-30T00:00:00Z"
     }
   ]
 }
